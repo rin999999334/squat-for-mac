@@ -8,7 +8,11 @@ ChatGPT/Codex・Claudeの利用時間を数え、運動を案内するMacのメ�
 
 [English](README.md) · [使い方・FAQ](docs/USER_GUIDE.md) · [プライバシー](PRIVACY.md) · [監査](docs/AUDIT.md) · [残課題](docs/KNOWN_ISSUES.md)
 
-> **0.9.0・非公開での事前確認版。** 公開ダウンロードとAppleの公証はまだありません。コードの公開ライセンスは未決定で、現時点ではオープンソースとしての公開ではありません。
+> **0.9.1・非公開での事前確認版。** 公開ダウンロードとAppleの公証はまだありません。コードの公開ライセンスは未決定で、現時点ではオープンソースとしての公開ではありません。
+
+## ダウンロード
+
+[確認版0.9.1](https://github.com/rin999999334/squat-for-mac/releases/tag/v0.9.1)のAssetsからarm64版のZIPを選びます。GitHubは非公開のため、権限のあるアカウントでログインしてください。[初回の開き方とプレビュー](docs/DOWNLOAD.md)。
 
 ## 画面
 

@@ -1,6 +1,6 @@
 # Privacy
 
-Applies to the Squat for Mac 0.9.0 private pre-release source tree, as reviewed on 2026-10-19. This describes this app's implementation, not the privacy practices of ChatGPT, Claude, macOS, or sites you choose to open.
+Applies to the Squat for Mac 0.9.1 private pre-release source tree, as reviewed on 2026-10-19. This describes this app's implementation, not the privacy practices of ChatGPT, Claude, macOS, or sites you choose to open.
 
 ## What runs on your Mac
 

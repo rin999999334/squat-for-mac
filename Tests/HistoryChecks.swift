@@ -7,7 +7,7 @@ import Foundation
             precondition(condition(), message)
             checked += 1
         }
-        let suite = "ThinkAndMove.HistoryChecks.\(UUID().uuidString)"
+        let suite = "SquatForMac.HistoryChecks.\(UUID().uuidString)"
         let defaults = UserDefaults(suiteName: suite)!
         defer { defaults.removePersistentDomain(forName: suite) }
         var calendar = Calendar(identifier: .gregorian)
@@ -61,7 +61,7 @@ import Foundation
         check(again.dailyGoal == 1 && defaults.integer(forKey: "thinkAndMove.dailyGoal") == 1, "Target validation persists corrected value")
 
         let broken = Data("unreadable archived history".utf8)
-        let recoverySuite = "ThinkAndMove.HistoryRecoveryChecks.\(UUID().uuidString)"
+        let recoverySuite = "SquatForMac.HistoryRecoveryChecks.\(UUID().uuidString)"
         let recoveryDefaults = UserDefaults(suiteName: recoverySuite)!
         defer { recoveryDefaults.removePersistentDomain(forName: recoverySuite) }
         recoveryDefaults.set(24, forKey: "totalReps")

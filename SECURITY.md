@@ -2,7 +2,7 @@
 
 ## Current status
 
-Squat for Mac 0.9.0 is a private pre-release. Review findings and test evidence are release inputs, not a guarantee that every defect has been found. There is no externally certified security assessment or published support SLA.
+Squat for Mac 0.9.1 is a private pre-release. Review findings and test evidence are release inputs, not a guarantee that every defect has been found. There is no externally certified security assessment or published support SLA.
 
 Normal time tracking and camera counting run locally. Camera permission is requested when starting a camera session. The normal runtime does not need Accessibility, Screen Recording, microphone access, an AI API key, or an AI account password. See [PRIVACY.md](PRIVACY.md) for data locations and intentional sharing.
 

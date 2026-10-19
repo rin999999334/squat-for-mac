@@ -42,7 +42,7 @@ if [ "$IDENTITY" != '-' ]; then
 fi
 
 if [ "$MODE" = preview ]; then
-    DESTINATION="$PWD/SquatReview.app"
+    DESTINATION="$PWD/dist/Squat for Mac Preview.app"
 else
     DESTINATION="$PWD/dist/Squat for Mac.app"
 fi
@@ -100,22 +100,22 @@ fi
 
 xcrun swiftc -swift-version 5 -parse-as-library -O \
     -target "$TARGET" -module-cache-path "$PWD/.build/module-cache" \
-    Sources/ThinkAndMove/*.swift -lsqlite3 -o ".build/ThinkAndMove-$MODE"
+    Sources/SquatForMac/*.swift -lsqlite3 -o ".build/SquatForMac-$MODE"
 BUILD_STAGE=$(mktemp -d "${TMPDIR:-/tmp}/squat-package-XXXXXX")
 APP="$BUILD_STAGE/Squat.app"
 mkdir -p "$APP/Contents/MacOS" "$APP/Contents/Resources"
-cp ".build/ThinkAndMove-$MODE" "$APP/Contents/MacOS/ThinkAndMove"
+cp ".build/SquatForMac-$MODE" "$APP/Contents/MacOS/SquatForMac"
 cp Info.plist "$APP/Contents/Info.plist"
-cp -R Sources/ThinkAndMove/Resources/. "$APP/Contents/Resources/"
+cp -R Sources/SquatForMac/Resources/. "$APP/Contents/Resources/"
 if [ "$MODE" = preview ]; then
     /usr/libexec/PlistBuddy -c 'Set :CFBundleIdentifier local.thinkandmove.ui-preview.v27' "$APP/Contents/Info.plist"
     /usr/libexec/PlistBuddy -c 'Add :SquatPreviewWelcome bool true' "$APP/Contents/Info.plist"
-    /usr/libexec/PlistBuddy -c 'Set :CFBundleDisplayName Squat for Mac Review 0.9.0' "$APP/Contents/Info.plist"
+    /usr/libexec/PlistBuddy -c 'Set :CFBundleDisplayName Squat for Mac Preview 0.9.1' "$APP/Contents/Info.plist"
 fi
 # Remove only Finder metadata from the generated staging bundle.
 xattr -dr com.apple.FinderInfo "$APP" 2>/dev/null || true
 codesign --force --sign "$IDENTITY" --options runtime \
-    --entitlements ThinkAndMove.entitlements "$APP"
+    --entitlements SquatForMac.entitlements "$APP"
 codesign --verify --deep --strict "$APP"
 FINAL_FINGERPRINT=$(python3 scripts/build_cache.py inputs --mode "$MODE" \
     --identity "$IDENTITY" --target "$TARGET" --toolchain "$TOOLCHAIN")

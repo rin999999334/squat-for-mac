@@ -113,8 +113,8 @@ def _digest_entries(paths, root, context):
 
 def input_digest(root, mode, identity, target, toolchain):
     root = Path(root).absolute()
-    source = _checked_subdirectory(root, "Sources/ThinkAndMove")
-    resources = _checked_subdirectory(root, "Sources/ThinkAndMove/Resources")
+    source = _checked_subdirectory(root, "Sources/SquatForMac")
+    resources = _checked_subdirectory(root, "Sources/SquatForMac/Resources")
     _checked_subdirectory(root, "scripts")
     swift = list(source.glob("*.swift"))
     if not swift:
@@ -122,7 +122,7 @@ def input_digest(root, mode, identity, target, toolchain):
     if any(not stat.S_ISREG(_checked_stat(path).st_mode) for path in swift):
         raise CacheError("Swift inputs must be regular files.")
     selected = swift + _entries(resources)
-    for relative in ("Info.plist", "ThinkAndMove.entitlements", "scripts/build.sh", "scripts/preview.sh", "scripts/build_cache.py"):
+    for relative in ("Info.plist", "SquatForMac.entitlements", "scripts/build.sh", "scripts/preview.sh", "scripts/build_cache.py"):
         path = root / relative
         if not stat.S_ISREG(_checked_stat(path).st_mode):
             raise CacheError("A required build input is not a regular file.")

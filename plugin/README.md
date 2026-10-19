@@ -9,7 +9,7 @@
 - ID：squat-link-review@squat-review-v27
 - UserPromptSubmitのcommandを1件、async=true、timeout=1秒。
 - 実行する小さなSwiftプログラムは、このMacの確認版受信口へ必要な情報だけを送ります。本文の保存・転送・外部AI呼び出し・会話への追加文章はありません。
-- ソース：SquatBridge.swift。確認版の受信部：Sources/ThinkAndMove/SquatLocalLink.swift（このpluginフォルダの親が実装ルート）。
+- ソース：SquatBridge.swift。確認版の受信部：Sources/SquatForMac/SquatLocalLink.swift（このpluginフォルダの親が実装ルート）。
 
 導入はCodexの公式の配布元追加→プラグイン導入→有効化→フック定義の信頼確認→テスト送信の順です。ファイルをコピーしただけで導入・許可済みとは扱いません。
 

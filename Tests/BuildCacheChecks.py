@@ -17,18 +17,18 @@ class BuildCacheChecks(unittest.TestCase):
         self.addCleanup(self.temporary.cleanup)
         self.root = Path(self.temporary.name)
         for relative, content in {
-            "Sources/ThinkAndMove/App.swift": b"// synthetic Swift input\n",
-            "Sources/ThinkAndMove/Resources/Fonts/font.ttf": b"font\x00bytes",
-            "Sources/ThinkAndMove/Resources/ja.lproj/InfoPlist.strings": "camera = カメラ;".encode(),
+            "Sources/SquatForMac/App.swift": b"// synthetic Swift input\n",
+            "Sources/SquatForMac/Resources/Fonts/font.ttf": b"font\x00bytes",
+            "Sources/SquatForMac/Resources/ja.lproj/InfoPlist.strings": "camera = カメラ;".encode(),
             "Info.plist": b"synthetic plist",
-            "ThinkAndMove.entitlements": b"synthetic entitlements",
+            "SquatForMac.entitlements": b"synthetic entitlements",
             "scripts/build.sh": b"synthetic build",
             "scripts/preview.sh": b"synthetic preview",
             "scripts/build_cache.py": b"synthetic helper input",
         }.items():
             self.write(relative, content)
         self.app = self.root / "output/Squat.app"
-        self.executable = self.app / "Contents/MacOS/ThinkAndMove"
+        self.executable = self.app / "Contents/MacOS/SquatForMac"
         self.executable.parent.mkdir(parents=True)
         self.executable.write_bytes(b"not an executable; synthetic bundle bytes")
         self.executable.chmod(0o755)
@@ -81,20 +81,20 @@ class BuildCacheChecks(unittest.TestCase):
 
     def test_source_content_change(self):
         before = self.fingerprint()
-        self.write("Sources/ThinkAndMove/App.swift", b"// changed source\n")
+        self.write("Sources/SquatForMac/App.swift", b"// changed source\n")
         self.assertNotEqual(before, self.fingerprint())
 
     def test_source_addition(self):
         before = self.fingerprint()
-        self.write("Sources/ThinkAndMove/New.swift", b"// another source")
+        self.write("Sources/SquatForMac/New.swift", b"// another source")
         self.assertNotEqual(before, self.fingerprint())
 
     def test_nested_resource_change_addition_and_removal(self):
         before = self.fingerprint()
-        resource = self.write("Sources/ThinkAndMove/Resources/Fonts/font.ttf", b"changed font")
+        resource = self.write("Sources/SquatForMac/Resources/Fonts/font.ttf", b"changed font")
         changed = self.fingerprint()
         self.assertNotEqual(before, changed)
-        extra = self.write("Sources/ThinkAndMove/Resources/new/nested/image.png", b"image")
+        extra = self.write("Sources/SquatForMac/Resources/new/nested/image.png", b"image")
         added = self.fingerprint()
         self.assertNotEqual(changed, added)
         extra.unlink()
@@ -103,7 +103,7 @@ class BuildCacheChecks(unittest.TestCase):
         self.assertNotEqual(changed, self.fingerprint())
 
     def test_selected_metadata_and_scripts_change(self):
-        for relative in ("Info.plist", "ThinkAndMove.entitlements", "scripts/build.sh", "scripts/preview.sh", "scripts/build_cache.py"):
+        for relative in ("Info.plist", "SquatForMac.entitlements", "scripts/build.sh", "scripts/preview.sh", "scripts/build_cache.py"):
             with self.subTest(relative=relative):
                 path = self.root / relative
                 original = path.read_bytes()
@@ -113,7 +113,7 @@ class BuildCacheChecks(unittest.TestCase):
                 path.write_bytes(original)
 
     def test_file_modes_are_inputs_but_mtime_is_not(self):
-        path = self.root / "Sources/ThinkAndMove/App.swift"
+        path = self.root / "Sources/SquatForMac/App.swift"
         before = self.fingerprint()
         info = path.stat()
         os.utime(path, ns=(info.st_atime_ns, info.st_mtime_ns + 100_000_000))
@@ -142,7 +142,7 @@ class BuildCacheChecks(unittest.TestCase):
         self.assertNotIn("Traceback", result.stderr)
 
     def test_input_file_and_directory_symlinks_are_rejected(self):
-        resources = self.root / "Sources/ThinkAndMove/Resources"
+        resources = self.root / "Sources/SquatForMac/Resources"
         for target in (resources / "Fonts/font.ttf", resources / "Fonts"):
             with self.subTest(target=target):
                 link = resources / "linked-input"
@@ -161,7 +161,7 @@ class BuildCacheChecks(unittest.TestCase):
         self.assertEqual(result.returncode, 1)
 
     def test_directory_with_swift_extension_is_not_a_source_file(self):
-        (self.root / "Sources/ThinkAndMove/invalid.swift").mkdir()
+        (self.root / "Sources/SquatForMac/invalid.swift").mkdir()
         result = self.cli("inputs", "--root", self.root, "--mode", "production", "--identity", "-", "--target", "test", "--toolchain", "test")
         self.assertEqual(result.returncode, 1)
         self.assertNotIn("Traceback", result.stderr)

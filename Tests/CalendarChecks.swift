@@ -33,7 +33,7 @@ import Foundation
         let dst = ContributionCalendarModel(referenceDate: dstReference, calendar: dstCalendar)
         check(dst.days.count == 91 && (0..<91).allSatisfy { dstCalendar.component(.hour, from: dst.days[$0].date) == 0 }, "Daylight-saving transition retains local midnight cells")
 
-        let suite = "ThinkAndMove.CalendarChecks.\(UUID().uuidString)"
+        let suite = "SquatForMac.CalendarChecks.\(UUID().uuidString)"
         let defaults = UserDefaults(suiteName: suite)!
         defer { defaults.removePersistentDomain(forName: suite) }
         defaults.set(100, forKey: "totalReps")

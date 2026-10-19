@@ -6,7 +6,7 @@ import sys
 import os
 
 root = Path(__file__).resolve().parent.parent
-src = root / "Sources/ThinkAndMove"
+src = root / "Sources/SquatForMac"
 history = ["WorkoutHistory", "SQLiteWorkoutRepository"]
 movement = ["WorkoutPreparation", "FaceDepthLines", "FaceMovementCounter", "SquatCounter"]
 checks = {

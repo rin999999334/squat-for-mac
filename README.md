@@ -8,7 +8,11 @@ A local macOS menu bar app that tracks active time in ChatGPT/Codex and Claude, 
 
 [日本語](README.ja.md) · [User guide](docs/USER_GUIDE.md) · [Privacy](PRIVACY.md) · [Security](SECURITY.md) · [Audit](docs/AUDIT.md) · [Known issues](docs/KNOWN_ISSUES.md)
 
-> **0.9.0 · private pre-release.** This repository is being prepared for an initial private review. There is no public download or notarized release yet. Source-code licensing is still being decided; this is not currently an open-source release.
+> **0.9.1 · private pre-release.** This repository is being prepared for an initial private review. There is no public download or notarized release yet. Source-code licensing is still being decided; this is not currently an open-source release.
+
+## Download the private preview
+
+Sign in with an account that can access this private repository, then [download version 0.9.1](https://github.com/rin999999334/squat-for-mac/releases/tag/v0.9.1). Choose the arm64 app ZIP under Assets. [First launch and preview instructions](docs/DOWNLOAD.md).
 
 ## Preview
 

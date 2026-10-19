@@ -4,7 +4,7 @@ import ImageIO
 
 final class Camera: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
     let session = AVCaptureSession()
-    private let queue = DispatchQueue(label: "ThinkAndMove.camera")
+    private let queue = DispatchQueue(label: "SquatForMac.camera")
     private var configured = false
     private var lastFrame = 0.0
     private var preferredSide: String?

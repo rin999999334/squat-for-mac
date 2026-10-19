@@ -16,7 +16,7 @@ import Foundation
         var suites: [(String, UserDefaults)] = []
         defer { for (suite, defaults) in suites { defaults.removePersistentDomain(forName: suite) } }
         func makeHistory(in override: Calendar? = nil, legacy: Int = 0) -> WorkoutHistory {
-            let suite = "ThinkAndMove.StreakChecks.\(UUID().uuidString)"
+            let suite = "SquatForMac.StreakChecks.\(UUID().uuidString)"
             let defaults = UserDefaults(suiteName: suite)!
             suites.append((suite, defaults))
             defaults.set(legacy, forKey: "totalReps")
