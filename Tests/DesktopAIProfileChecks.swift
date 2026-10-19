@@ -1,0 +1,120 @@
+import Foundation
+
+@main struct DesktopAIProfileChecks {
+    static func main() throws {
+        var count = 0
+        func check(_ value: @autoclosure () -> Bool, _ name: String) { precondition(value(), name); count += 1 }
+        let chat = DesktopAIApplicationIdentity(bundleID: "com.openai.chat", version: "1.2", build: "123")
+        let claude = DesktopAIApplicationIdentity(bundleID: "com.anthropic.claudefordesktop", version: "2.0", build: "456")
+        let integrated = DesktopAIApplicationIdentity(bundleID: "com.openai.codex", version: "1.2", build: "123")
+        let window = UUID()
+        let stop = DesktopAIStopControl(role: "AXButton", identifier: "stop-generation", label: "Stop generating")
+        func observation(_ controls: [DesktopAIStopControl] = [], app: DesktopAIApplicationIdentity = chat,
+                         windowID: UUID = window, at time: Double = 0, ambiguous: Bool = false,
+                         complete: Bool = true, chatMode: Bool = false) -> DesktopAIControlObservation {
+            DesktopAIControlObservation(application: app, windowID: windowID, controls: controls,
+                                        hasAmbiguousControl: ambiguous, complete: complete, observedAt: time,
+                                        ordinaryChatModeVerified: chatMode)
+        }
+        check(chat.isSupported(for: .chatgptDesktop), "Exact ordinary ChatGPT identity is supported")
+        check(claude.isSupported(for: .claudeDesktop), "Exact ordinary Claude identity is supported")
+        check(!chat.isSupported(for: .claudeDesktop) && !claude.isSupported(for: .chatgptDesktop), "Provider identity cannot cross")
+        check(integrated.isSupported(for: .chatgptDesktop) && integrated.requiresChatModeProof, "Integrated app is a candidate, never ordinary Chat by identity alone")
+        check(!DesktopAIApplicationIdentity(bundleID: "com.anthropic.claude-code", version: "1", build: "1").isSupported(for: .claudeDesktop), "Claude Code is never treated as ordinary Claude")
+        check(!DesktopAIApplicationIdentity(bundleID: chat.bundleID, version: "unknown", build: "1").isSupported(for: .chatgptDesktop), "Unknown version cannot verify")
+        check(!DesktopAIApplicationIdentity(bundleID: chat.bundleID, version: "1", build: "").isSupported(for: .chatgptDesktop), "Missing build cannot verify")
+        check(stop.isStrictGenerationControl, "A strict generation-specific public button is eligible")
+        for label in ["Stop", "停止", "Cancel", "Allow", "Approve", "Continue", "生成を停止してください", "Stop generating all tasks"] {
+            check(!DesktopAIStopControl(role: "AXButton", identifier: nil, label: label).isStrictGenerationControl, "Generic or substring label rejected: \(label)")
+        }
+        check(!DesktopAIStopControl(role: "AXStaticText", identifier: "stop-generation", label: "Stop generating").isStrictGenerationControl, "Text cannot masquerade as an actionable stop button")
+        check(!DesktopAIStopControl(role: "AXButton", identifier: String(repeating: "x", count: 257), label: "Stop generating").isStrictGenerationControl, "Oversized descriptor rejected")
+        check(!DesktopAIStopControl(role: "AXButton", identifier: "bad\nidentifier", label: "Stop generating").isStrictGenerationControl, "Multiline identifier rejected")
+        check(DesktopAIStopControl.safeIdentifier("https://example.com/conversation/123") == nil && DesktopAIStopControl.safeIdentifier("/Users/private/chat") == nil && DesktopAIStopControl.safeIdentifier(UUID().uuidString) == nil, "Dynamic URL, path and conversation identifiers are never retained")
+        check(DesktopAIStopControl.safeIdentifier("stop-generation") == "stop-generation", "Only a fixed known stop identifier can be retained")
+        check(!DesktopAIStopControl(role: "AXButton", identifier: "conversation-123", label: "Stop generating").isStrictGenerationControl, "A loaded dynamic descriptor is rejected")
+        check(DesktopAIStopControl(role: "AXButton", identifier: nil, label: "生成を停止").isStrictGenerationControl, "Strict Japanese generation label is eligible only for actual calibration")
+        check(!AIConnectionSetupStep.idle.isCapturing && AIConnectionSetupStep.captureCompletion.isCapturing && !AIConnectionSetupStep.connected.isCapturing, "Only explicit setup stages capture")
+
+        var modes = DesktopAIChatModeEvidence()
+        check(!modes.verifiedOrdinaryChat && !modes.hasConflictingOrUnknownMode, "No mode evidence cannot certify an integrated app")
+        modes.observe(label: "chat", selected: true)
+        check(!modes.verifiedOrdinaryChat, "Chat alone does not prove coding modes are unselected")
+        modes.observe(label: "code", selected: false)
+        modes.observe(label: "work", selected: false)
+        check(modes.verifiedOrdinaryChat && !modes.hasConflictingOrUnknownMode, "Selected Chat with explicitly unselected coding modes is positive evidence")
+        modes.observe(label: "cowork", selected: true)
+        check(!modes.verifiedOrdinaryChat && modes.hasConflictingOrUnknownMode, "Any selected coding mode vetoes Chat evidence")
+        var uncertainMode = DesktopAIChatModeEvidence()
+        uncertainMode.observe(label: "chat", selected: true); uncertainMode.observe(label: "codex", selected: nil)
+        check(!uncertainMode.verifiedOrdinaryChat && uncertainMode.hasConflictingOrUnknownMode, "Unreadable coding selection cannot be assumed false")
+        var sidebarNames = DesktopAIChatModeEvidence()
+        sidebarNames.observe(label: "chat", selected: true, role: "AXButton", identifier: "conversation-123")
+        sidebarNames.observe(label: "code", selected: false, role: "AXButton", identifier: "conversation-456")
+        check(!sidebarNames.verifiedOrdinaryChat, "Sidebar buttons named Chat and Code cannot masquerade as mode tabs")
+        var buttonModes = DesktopAIChatModeEvidence()
+        buttonModes.observe(label: "chat", selected: true, role: "AXButton", identifier: "chat-tab")
+        buttonModes.observe(label: "code", selected: false, role: "AXButton", identifier: "code-tab")
+        check(buttonModes.verifiedOrdinaryChat, "A fixed mode-button identifier plus selected state is structural evidence")
+        let codingObservation = DesktopAIControlObservation(application: claude, windowID: window, controls: [stop], hasAmbiguousControl: false, complete: true, observedAt: 4, hasConflictingMode: true)
+        check(!codingObservation.isOrdinaryChat, "Known coding mode rejects even a canonical Claude chat bundle")
+
+        var verification = DesktopAIProfileVerification()
+        check(!verification.captureRunning(observation([stop], at: 1), provider: .chatgptDesktop), "Running without an idle capture cannot verify")
+        check(verification.complete(observation(at: 2), provider: .chatgptDesktop) == nil, "Completion without preceding captures cannot create a profile")
+        check(!verification.captureIdle(observation([stop]), provider: .chatgptDesktop), "A currently generating app cannot be captured as idle")
+        check(!verification.captureIdle(observation(ambiguous: true), provider: .chatgptDesktop), "Approval or generic Stop rejects idle")
+        check(!verification.captureIdle(observation(complete: false), provider: .chatgptDesktop), "A truncated AX read never establishes idle")
+        check(!verification.captureIdle(observation(at: .nan), provider: .chatgptDesktop), "Invalid monotonic time cannot verify")
+        check(verification.captureIdle(observation(at: 1), provider: .chatgptDesktop), "A complete idle observation starts calibration")
+        check(!verification.captureRunning(observation([stop], windowID: UUID(), at: 2), provider: .chatgptDesktop), "A different focused window cannot inherit idle")
+        let updated = DesktopAIApplicationIdentity(bundleID: chat.bundleID, version: chat.version, build: "124")
+        check(!verification.captureRunning(observation([stop], app: updated, at: 2), provider: .chatgptDesktop), "A different app build cannot inherit idle")
+        check(!verification.captureRunning(observation([stop], at: 1), provider: .chatgptDesktop), "Repeated setup timestamp is rejected")
+        check(!verification.captureRunning(observation([stop, stop], at: 2), provider: .chatgptDesktop), "Two generation controls are ambiguous")
+        check(!verification.captureRunning(observation([stop], at: 2, ambiguous: true), provider: .chatgptDesktop), "A generation control with approval waiting is rejected")
+        check(verification.captureRunning(observation([stop], at: 2), provider: .chatgptDesktop), "The same window's newly visible unique generation button is captured")
+        check(verification.complete(observation([stop], at: 3), provider: .chatgptDesktop) == nil, "An unchanged running button cannot complete verification")
+        check(verification.complete(observation(windowID: UUID(), at: 3), provider: .chatgptDesktop) == nil, "Changing windows cannot fake completion")
+        check(verification.complete(observation(at: 1.5), provider: .chatgptDesktop) == nil, "Reversed completion time rejected")
+        check(verification.complete(observation(at: 3, complete: false), provider: .chatgptDesktop) == nil, "Incomplete reads cannot fake disappearance")
+        let profile = verification.complete(observation(at: 3), provider: .chatgptDesktop)!
+        check(profile.isValid && profile.matches(chat, provider: .chatgptDesktop), "Idle, addition and disappearance create an exact-version profile")
+        check(!profile.matches(updated, provider: .chatgptDesktop), "Build changes invalidate a saved profile")
+        check(profile.phase(for: observation(at: 4)) == .idle, "Absence is idle only for the verified ordinary app")
+        check(profile.phase(for: observation([stop], at: 4)) == .running, "The exact verified control gives a running observation")
+        check(profile.phase(for: observation([stop], at: 4, ambiguous: true)) == .unknown, "A later approval ambiguity suppresses running")
+        check(profile.phase(for: observation([stop], at: 4, complete: false)) == .unknown, "Traversal limit suppresses running")
+        let changedControl = DesktopAIStopControl(role: "AXButton", identifier: "different-control", label: stop.label)
+        check(profile.phase(for: observation([changedControl], at: 4)) == .unknown, "A same-label different control does not inherit verification")
+        check(profile.phase(for: observation([stop, stop], at: 4)) == .unknown, "Multiple live controls suppress running")
+        check(profile.phase(for: observation([stop], app: updated, at: 4)) == .unknown, "Different builds cannot emit running")
+        let encoded = try JSONEncoder().encode(profile)
+        let decoded = try JSONDecoder().decode(DesktopAIProfile.self, from: encoded)
+        check(decoded == profile, "Minimal descriptor and application metadata round trip")
+        let keys = Set((try JSONSerialization.jsonObject(with: encoded) as! [String: Any]).keys)
+        check(keys == ["schemaVersion", "provider", "application", "stopControl"], "Profile contains no window, conversation, prompt, response or timestamp identifiers")
+        var json = try JSONSerialization.jsonObject(with: encoded) as! [String: Any]
+        json["schemaVersion"] = 99
+        let unsupported = try JSONDecoder().decode(DesktopAIProfile.self, from: JSONSerialization.data(withJSONObject: json))
+        check(!unsupported.isValid, "Unrecognized persisted schemas are ignored")
+
+        var integratedVerification = DesktopAIProfileVerification()
+        check(!integratedVerification.captureIdle(observation(app: integrated, at: 1), provider: .chatgptDesktop), "Integrated identity without positive Chat mode is refused")
+        check(integratedVerification.captureIdle(observation(app: integrated, at: 1, chatMode: true), provider: .chatgptDesktop), "Explicit Chat selected and coding modes unselected permits first step")
+        check(!integratedVerification.captureRunning(observation([stop], app: integrated, at: 2), provider: .chatgptDesktop), "Switching integrated mode blocks the running capture")
+        check(integratedVerification.captureRunning(observation([stop], app: integrated, at: 2, chatMode: true), provider: .chatgptDesktop), "Same ordinary Chat mode can verify the new control")
+        check(integratedVerification.complete(observation(app: integrated, at: 3), provider: .chatgptDesktop) == nil, "Mode proof is also required at completion")
+        let integratedProfile = integratedVerification.complete(observation(app: integrated, at: 3, chatMode: true), provider: .chatgptDesktop)!
+        check(integratedProfile.phase(for: observation([stop], app: integrated, at: 4)) == .unknown, "Persisted integrated profile never grants Code or unknown mode")
+        check(integratedProfile.phase(for: observation([stop], app: integrated, at: 4, chatMode: true)) == .running, "Every integrated poll requires current ordinary Chat proof")
+        var tracker = AIActivityTracker()
+        let source = AIActivitySource(provider: .chatgptDesktop, processID: 10, sourceID: UUID())
+        tracker.selectSource(source)
+        check(tracker.observe(source: source, phase: profile.phase(for: observation([stop], at: 5)), at: 5, sequence: 1)?.phase == .unknown, "Verified profile does not bypass fresh idle requirement")
+        _ = tracker.observe(source: source, phase: .idle, at: 6, sequence: 2)
+        check(tracker.observe(source: source, phase: .running, at: 7, sequence: 3)?.phase == .unknown, "First positive remains conservative")
+        check(tracker.observe(source: source, phase: .running, at: 8, sequence: 4)?.phase == .running, "Second positive after idle confirms generation")
+        print("PASS: \(count) desktop AI profile checks")
+    }
+}

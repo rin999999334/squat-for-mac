@@ -1,0 +1,154 @@
+{
+  "appVersion": "0.9.0",
+  "fixture": "reference-weekly",
+  "capturedViews": [
+    "home",
+    "history",
+    "settings"
+  ],
+  "personalData": false,
+  "cameraUsed": false,
+  "workoutStarted": false,
+  "bundlePersonalProfileKeys": false,
+  "fixturePreferences": "preview-only suite",
+  "fixtureDatabase": "random temporary directory",
+  "framesVisuallyReviewed": true,
+  "nativeSourceExecutableHashAfterSigningEqual": false,
+  "captures": [
+    {
+      "file": "home-demo.png",
+      "width": 804,
+      "height": 1412,
+      "sha256": "3665bf881a74d2731e97d4ddb9e9e942fc51a8b7dad3196b11c9f601f948819d",
+      "data": "synthetic demo only",
+      "capture": "native app view"
+    },
+    {
+      "file": "detail-demo.png",
+      "width": 1604,
+      "height": 962,
+      "sha256": "b4644d0d8e9f2ce204825a133198dde4b58dc774109a671713ad77c79a01823f",
+      "data": "synthetic demo only",
+      "capture": "native app view"
+    },
+    {
+      "file": "settings-demo.png",
+      "width": 804,
+      "height": 1412,
+      "sha256": "a1a14d5f66d12cf77106a7e59033696541f4a2889a728ee2bd37fb10a11af1d7",
+      "data": "synthetic demo only",
+      "capture": "native app view"
+    },
+    {
+      "file": "today-card-demo.png",
+      "width": 724,
+      "height": 374,
+      "sha256": "23c09a7f4c58fe4992d7eecfb75269554429a83eb0391c8b78a88b795a8562b9",
+      "data": "synthetic demo only",
+      "capture": "native app view"
+    },
+    {
+      "file": "total-card-demo.png",
+      "width": 724,
+      "height": 374,
+      "sha256": "23c9c95f850512369fbde8655dccfa3fd1b63f3039af8833993667324cd23d88",
+      "data": "synthetic demo only",
+      "capture": "native app view"
+    },
+    {
+      "file": "menu-demo.png",
+      "width": 640,
+      "height": 376,
+      "sha256": "b52d82c164c8518dcf1bfbc37bfb112cd3c1961b8c927f0bc1e6370bf087ffe2",
+      "data": "synthetic demo only",
+      "capture": "native menu view harness with dummy values"
+    }
+  ],
+  "captureMetadata": {
+    "home": {
+      "cameraRunning": false,
+      "contentOpacity": 1,
+      "count": 0,
+      "goal": 9,
+      "height": 706,
+      "interval": 60,
+      "language": "en",
+      "lifetimeReps": 258,
+      "nativeWindowButtons": [
+        true,
+        true,
+        true
+      ],
+      "notificationPanelsVisible": 0,
+      "presentationScreen": "home",
+      "preview": true,
+      "reviewSheetAttached": false,
+      "screen": "home",
+      "sessionTarget": 5,
+      "state": "idle",
+      "todayReps": 30,
+      "transitioning": false,
+      "width": 402,
+      "windowHeight": 706,
+      "windowWidth": 402,
+      "workoutActive": false
+    },
+    "detail": {
+      "cameraRunning": false,
+      "contentOpacity": 1,
+      "count": 0,
+      "goal": 9,
+      "height": 481,
+      "interval": 60,
+      "language": "en",
+      "lifetimeReps": 258,
+      "nativeWindowButtons": [
+        true,
+        true,
+        true
+      ],
+      "notificationPanelsVisible": 0,
+      "presentationScreen": "history",
+      "preview": true,
+      "reviewSheetAttached": false,
+      "screen": "history",
+      "sessionTarget": 5,
+      "state": "idle",
+      "todayReps": 30,
+      "transitioning": false,
+      "width": 802,
+      "windowHeight": 481,
+      "windowWidth": 802,
+      "workoutActive": false
+    },
+    "settings": {
+      "cameraRunning": false,
+      "contentOpacity": 1,
+      "count": 0,
+      "goal": 9,
+      "height": 706,
+      "interval": 60,
+      "language": "en",
+      "lifetimeReps": 258,
+      "nativeWindowButtons": [
+        true,
+        true,
+        true
+      ],
+      "notificationPanelsVisible": 0,
+      "presentationScreen": "settings",
+      "preview": true,
+      "reviewSheetAttached": false,
+      "screen": "settings",
+      "sessionTarget": 5,
+      "state": "idle",
+      "todayReps": 30,
+      "transitioning": false,
+      "width": 402,
+      "windowHeight": 706,
+      "windowWidth": 402,
+      "workoutActive": false
+    }
+  },
+  "scope": "UI evidence only. Not a real-use camera, notification, usage timing, hook, or security proof."
+}

@@ -1,0 +1,15 @@
+name: Feature idea / 改善案
+description: Describe the problem and the smallest useful change.
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: What are you trying to do? / 何をしたいですか
+    validations:
+      required: true
+  - type: textarea
+    id: suggestion
+    attributes:
+      label: Suggested change / 改善案
+      description: Keep the core experience simple; include a concrete example.
+

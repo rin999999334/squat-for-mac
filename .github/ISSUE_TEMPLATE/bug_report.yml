@@ -1,0 +1,35 @@
+name: Bug report / 不具合
+description: Report a reproducible problem without private data.
+title: "[Bug] "
+body:
+  - type: markdown
+    attributes:
+      value: "Do not include chat text, camera images, local databases, tokens, or personal paths. For security issues, read SECURITY.md. / 会話・映像・記録DB・トークン・個人のパスは添付しないでください。"
+  - type: input
+    id: version
+    attributes:
+      label: Squat for Mac version
+    validations:
+      required: true
+  - type: input
+    id: system
+    attributes:
+      label: macOS version and Mac chip
+      placeholder: "macOS version, Apple Silicon or Intel"
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps, expected result, and actual result / 操作・期待・実際
+    validations:
+      required: true
+  - type: dropdown
+    id: timing
+    attributes:
+      label: Reminder timing / 通知タイミング
+      options:
+        - Time-based / 時間
+        - Experimental send integration / 検証中の送信連携
+        - Not related / 関係なし
+

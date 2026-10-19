@@ -1,0 +1,5 @@
+{
+  "name": "squat-review-v27",
+  "interface": {"displayName": "Squat local review"},
+  "plugins": [{"name": "squat-link-review", "source": {"source": "local", "path": "./plugins/squat-link-review"}, "policy": {"installation": "AVAILABLE", "authentication": "ON_INSTALL"}, "category": "Productivity"}]
+}

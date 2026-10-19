@@ -1,0 +1,6 @@
+{
+  "name": "squat-link-review",
+  "version": "0.0.2",
+  "description": "Local send-event transfer for the isolated Squat review app. No model calls or conversation output.",
+  "extensions": {"com.openai": {"hooks": "./hooks/hooks.json"}}
+}
