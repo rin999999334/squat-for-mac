@@ -8,11 +8,13 @@ ChatGPT/Codex・Claudeの利用時間を数え、運動を案内するMacのメ�
 
 [English](README.md) · [使い方・FAQ](docs/USER_GUIDE.md) · [プライバシー](PRIVACY.md) · [監査](docs/AUDIT.md) · [残課題](docs/KNOWN_ISSUES.md)
 
-> **0.9.1・非公開での事前確認版。** 公開ダウンロードとAppleの公証はまだありません。コードの公開ライセンスは未決定で、現時点ではオープンソースとしての公開ではありません。
+> **0.9.2・Apple Silicon向け公開プレビュー版。** ダウンロードして利用できます。Developer ID署名・Appleの公証は未対応のため、初回起動の手順を確認してください。コードの公開ライセンスは未決定です。
 
 ## ダウンロード
 
-[確認版0.9.1](https://github.com/rin999999334/squat-for-mac/releases/tag/v0.9.1)のAssetsからarm64版のZIPを選びます。GitHubは非公開のため、権限のあるアカウントでログインしてください。[初回の開き方とプレビュー](docs/DOWNLOAD.md)。
+[**Squat for Mac 0.9.2をダウンロード（Apple Silicon）**](https://github.com/rin999999334/squat-for-mac/releases/download/v0.9.2/Squat-for-Mac-0.9.2-arm64.zip) · [リリース情報](https://github.com/rin999999334/squat-for-mac/releases/tag/v0.9.2)
+
+ZIPをダブルクリックして展開し、**Squat for Mac.app**をFinder左側の「アプリケーション」へドラッグします。移動したアプリをダブルクリックして起動してください。ダウンロードにGitHubのログインは不要です。[初回起動の詳しい手順](docs/DOWNLOAD.md)。
 
 ## 画面
 
@@ -69,6 +71,6 @@ open "dist/Squat for Mac.app"
 
 通常の問い合わせは[Contact us](https://forms.gle/1ZvABbbDHBRJsd529)へ。セキュリティの懸念は[SECURITY.md](SECURITY.md)を参照し、公開Issueに個人情報や悪用の手順を載せないでください。
 
-`rin999999334/squat-for-mac` を非公開で作成し、ソースと説明資料を保存しました。[公開前の確認事項](docs/RELEASE_PLAN.md)を終えるまでは非公開を維持します。公開後、役立ちそうであればStarで保存してもらえるとうれしいです。
+役立ちそうであれば、⭐ Starやシェアで応援してもらえるとうれしいです。使ってみた感想もお待ちしています。安定版に向けた残課題は[配布計画](docs/RELEASE_PLAN.md)に記載しています。
 
-非公開の確認段階ではプロジェクトの権利を留保します。コードの利用・改変・再配布のライセンスは未決定です。同梱する第三者の素材は、それぞれの[ライセンス](THIRD_PARTY_NOTICES.md)に従います。
+プロジェクトの権利は留保しています。コードの利用・改変・再配布のライセンスは未決定です。同梱する第三者の素材は、それぞれの[ライセンス](THIRD_PARTY_NOTICES.md)に従います。

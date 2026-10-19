@@ -45,7 +45,8 @@ enum ReminderTriggerMode: String, Codable { case time, afterSend }
 
     init(defaults: UserDefaults = .standard) {
         self.defaults = defaults
-        publicShareURL = defaults.string(forKey: "squat.shareURL") ?? RefreshExternalLinks.demoShare
+        let storedShare = defaults.string(forKey: "squat.shareURL") ?? RefreshExternalLinks.defaultShare
+        publicShareURL = storedShare == RefreshExternalLinks.demoShare ? RefreshExternalLinks.defaultShare : storedShare
         if !defaults.bool(forKey: Self.simplifiedUIKey) {
             if defaults.string(forKey: Self.languageKey) == nil { defaults.set(AppLanguage.system.rawValue, forKey: Self.languageKey) }
             defaults.set(true, forKey: "looseMode")

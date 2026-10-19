@@ -110,7 +110,7 @@ cp -R Sources/SquatForMac/Resources/. "$APP/Contents/Resources/"
 if [ "$MODE" = preview ]; then
     /usr/libexec/PlistBuddy -c 'Set :CFBundleIdentifier local.thinkandmove.ui-preview.v27' "$APP/Contents/Info.plist"
     /usr/libexec/PlistBuddy -c 'Add :SquatPreviewWelcome bool true' "$APP/Contents/Info.plist"
-    /usr/libexec/PlistBuddy -c 'Set :CFBundleDisplayName Squat for Mac Preview 0.9.1' "$APP/Contents/Info.plist"
+    /usr/libexec/PlistBuddy -c 'Set :CFBundleDisplayName Squat for Mac Preview 0.9.2' "$APP/Contents/Info.plist"
 fi
 # Remove only Finder metadata from the generated staging bundle.
 xattr -dr com.apple.FinderInfo "$APP" 2>/dev/null || true

@@ -1,6 +1,6 @@
 # Contributing
 
-This repository is in private pre-release review. No project-code license has been selected yet; access to the repository is not a grant of permission to redistribute or relicense its code. Third-party assets keep their own licenses.
+This repository is a public preview. No project-code license has been selected yet; access to the repository is not a grant of permission to redistribute or relicense its code. Third-party assets keep their own licenses.
 
 Please discuss a feature or substantial behavior change with the owner before implementing it. The app is intentionally small: preserve agreed wording, layout, camera-counting behavior, and local data compatibility. Record newly discovered issues instead of silently adding unrelated features.
 

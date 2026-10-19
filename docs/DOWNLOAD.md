@@ -1,11 +1,11 @@
 # ダウンロードして初めて開く
 
-対象：Squat for Mac 0.9.1、Apple Silicon。GitHubリポジトリは非公開です。アクセス権のあるGitHubアカウントでログインしてください。
+対象：Squat for Mac 0.9.2、Apple Silicon。GitHubからログインなしでダウンロードできます。
 
 1. 起動中のSquatをメニューバーから終了します。ウィンドウを閉じるだけでは終了しません。
-2. [確認版のリリース](https://github.com/rin999999334/squat-for-mac/releases/tag/v0.9.1)を開き、Assetsの **Squat-for-Mac-0.9.1-arm64.zip** をダウンロードします。Source codeのZIPはアプリではありません。
+2. [確認版のリリース](https://github.com/rin999999334/squat-for-mac/releases/tag/v0.9.2)を開き、Assetsの **Squat-for-Mac-0.9.2-arm64.zip** をダウンロードします。Source codeのZIPはアプリではありません。
 3. ダウンロードしたZIPをダブルクリックして展開します。
-4. **Squat for Mac.app** をアプリケーションフォルダへ移します。体験だけ試す場合はDownloads内から開いても構いません。今ある個人用デスクトップ版は、確認が済むまで残してください。
+4. 展開して表示された **Squat for Mac.app** のアイコンを、Finder左側の「**アプリケーション**」へドラッグしてください。移動できたら「アプリケーション」を開きます。既存の個人用アプリは、記録の引き継ぎ確認が済むまで残してください。
 5. 置いたアプリをダブルクリックします。公証前のためmacOSに止められる場合があります。入手元・対象アプリを確認したうえで、[Appleの案内](https://support.apple.com/ja-jp/102445)に従い、システム設定 → プライバシーとセキュリティ → 該当アプリの「このまま開く」で判断します。「悪質」「破損」など別の警告なら、そのまま無視して進めず内容を確認します。保護機能の一括無効化は行いません。
 6. Homeから設定を開き、AI Apps、通知ON、間隔、日本語／英語、音量を確認します。通知タイミングは「利用時間」です。プラグインは不要です。
 7. Go Squatを押すと、必要な場合にカメラの許可が出ます。上半身が映る位置まで離れ、位置合わせを待ちます。
@@ -29,4 +29,4 @@ open "dist/Squat for Mac Preview.app"
 
 通常版とは別のbundle ID・設定・一時DBを使うデモです。画面に見える架空の記録を本番へ保存しません。通常版のアプリ名はSquat for Mac、プレビューはSquat for Mac Previewです。
 
-[詳しい使い方](USER_GUIDE.md) · [公開前の制限](KNOWN_ISSUES.md)
+[詳しい使い方](USER_GUIDE.md) · [既知の制限](KNOWN_ISSUES.md)

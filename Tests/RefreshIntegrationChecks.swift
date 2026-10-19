@@ -17,7 +17,10 @@ import Foundation
         defer { defaults.removePersistentDomain(forName: name) }
         let settings = AppSettings(defaults: defaults)
         check(settings.contactFormURL == RefreshExternalLinks.contact, "Contact button has the supplied default destination")
-        check(settings.isDemoShareURL, "Demo URL is clearly detectable")
+        check(settings.shareURL?.absoluteString == RefreshExternalLinks.defaultShare && !settings.isDemoShareURL, "Fresh installs share the real public repository")
+        defaults.set(RefreshExternalLinks.demoShare, forKey: "squat.shareURL")
+        let migrated = AppSettings(defaults: defaults)
+        check(migrated.shareURL?.absoluteString == RefreshExternalLinks.defaultShare && !migrated.isDemoShareURL, "Only the legacy placeholder migrates to the public repository")
         settings.publicShareURL = valid
         let restored = AppSettings(defaults: defaults)
         check(restored.shareURL?.absoluteString == valid && !restored.isDemoShareURL, "Custom URL survives reopening settings")

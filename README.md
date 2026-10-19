@@ -8,11 +8,13 @@ A local macOS menu bar app that tracks active time in ChatGPT/Codex and Claude, 
 
 [日本語](README.ja.md) · [User guide](docs/USER_GUIDE.md) · [Privacy](PRIVACY.md) · [Security](SECURITY.md) · [Audit](docs/AUDIT.md) · [Known issues](docs/KNOWN_ISSUES.md)
 
-> **0.9.1 · private pre-release.** This repository is being prepared for an initial private review. There is no public download or notarized release yet. Source-code licensing is still being decided; this is not currently an open-source release.
+> **0.9.2 · public preview for Apple Silicon.** Download the app below. Developer ID signing and Apple notarization are not available yet; read the first-launch instructions. Source-code licensing is still undecided, so this is not an open-source licensed release.
 
-## Download the private preview
+## Download
 
-Sign in with an account that can access this private repository, then [download version 0.9.1](https://github.com/rin999999334/squat-for-mac/releases/tag/v0.9.1). Choose the arm64 app ZIP under Assets. [First launch and preview instructions](docs/DOWNLOAD.md).
+[Download Squat for Mac 0.9.2 — Apple Silicon ZIP](https://github.com/rin999999334/squat-for-mac/releases/download/v0.9.2/Squat-for-Mac-0.9.2-arm64.zip) · [Release notes](https://github.com/rin999999334/squat-for-mac/releases/tag/v0.9.2) · [First-launch instructions](docs/DOWNLOAD.md)
+
+Download the ZIP, double-click to extract it, drag **Squat for Mac.app** into **Applications** in Finder, then open the app. No GitHub account is required to download.
 
 ## Preview
 
@@ -60,7 +62,7 @@ The app stays in the menu bar when its window is closed. **Quit** stops tracking
 | --- | --- |
 | AI time | Native app foreground time; browser tabs and background generation are not measured as AI use. ChatGPT and Codex share one total. |
 | Next reminder | Remaining **active AI time**, not a clock counting down while you use another app. It pauses while idle, asleep, locked, or exercising. |
-| Send-triggered reminder | Experimental Codex integration only. Ordinary ChatGPT/Claude send or response-completion detection is not supported. The bundled helper currently targets the review receiver; production integration is a release blocker. Use time mode. |
+| Send-triggered reminder | Experimental Codex integration only. Ordinary ChatGPT/Claude send or response-completion detection is not supported. The bundled helper currently targets the review receiver; this integration is unavailable in the public preview. Use time mode. |
 | Exercise recognition | Face-position movement is a counting aid, not a verified assessment of squat technique. Lighting, framing, and other people can affect counting. |
 | Social sharing | Save/add the PNG manually on X or Instagram; the app does not automatically upload or publish it. macOS sharing is also available. |
 | Data | Stored locally, with no cloud sync or built-in export/import workflow. Keep your own backup before replacing a build. |
@@ -71,6 +73,6 @@ Read the [user guide and FAQ](docs/USER_GUIDE.md) for permission prompts, partia
 
 Report ordinary feedback through [Contact us](https://forms.gle/1ZvABbbDHBRJsd529). For a suspected vulnerability, follow [SECURITY.md](SECURITY.md); do not post private data or exploit details in a public issue.
 
-The repository is `rin999999334/squat-for-mac` and has been created privately. Visibility remains private until the owner completes the [release checklist](docs/RELEASE_PLAN.md). Once public, a star is a simple way to bookmark the project if it is useful to you.
+If Squat for Mac is useful to you, a ⭐ Star or a shared link helps others discover it. Feedback is welcome. See the [release plan](docs/RELEASE_PLAN.md) for the remaining work toward a stable release.
 
-Project code is reserved during the private review phase; no redistribution or modification license has been selected. Included third-party assets retain their own licenses: [Third-party notices](THIRD_PARTY_NOTICES.md).
+Project-code rights remain reserved; no redistribution or modification license has been selected. Included third-party assets retain their own licenses: [Third-party notices](THIRD_PARTY_NOTICES.md).

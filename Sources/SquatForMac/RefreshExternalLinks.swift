@@ -3,6 +3,7 @@ import Foundation
 enum RefreshExternalLinks {
     static let contact = URL(string: "https://forms.gle/1ZvABbbDHBRJsd529")!
     static let demoShare = "https://github.com/example/squat"
+    static let defaultShare = "https://github.com/rin999999334/squat-for-mac"
     static func githubURL(_ value: String) -> URL? {
         let text = value.trimmingCharacters(in: .whitespacesAndNewlines)
         guard let parts = URLComponents(string: text), parts.scheme == "https",
