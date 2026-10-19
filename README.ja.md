@@ -65,6 +65,6 @@ open "dist/Squat for Mac.app"
 
 通常の問い合わせは[Contact us](https://forms.gle/1ZvABbbDHBRJsd529)へ。セキュリティの懸念は[SECURITY.md](SECURITY.md)を参照し、公開Issueに個人情報や悪用の手順を載せないでください。
 
-公開先の予定は `rin999999334/squat-for-mac` です。[公開前の確認事項](docs/RELEASE_PLAN.md)を終えるまでは非公開を維持します。公開後、役立ちそうであればStarで保存してもらえるとうれしいです。
+`rin999999334/squat-for-mac` を非公開で作成し、ソースと説明資料を保存しました。[公開前の確認事項](docs/RELEASE_PLAN.md)を終えるまでは非公開を維持します。公開後、役立ちそうであればStarで保存してもらえるとうれしいです。
 
 非公開の確認段階ではプロジェクトの権利を留保します。コードの利用・改変・再配布のライセンスは未決定です。同梱する第三者の素材は、それぞれの[ライセンス](THIRD_PARTY_NOTICES.md)に従います。

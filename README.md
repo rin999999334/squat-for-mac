@@ -67,6 +67,6 @@ Read the [user guide and FAQ](docs/USER_GUIDE.md) for permission prompts, partia
 
 Report ordinary feedback through [Contact us](https://forms.gle/1ZvABbbDHBRJsd529). For a suspected vulnerability, follow [SECURITY.md](SECURITY.md); do not post private data or exploit details in a public issue.
 
-The intended repository is `rin999999334/squat-for-mac`. Visibility remains private until the owner completes the [release checklist](docs/RELEASE_PLAN.md). Once public, a star is a simple way to bookmark the project if it is useful to you.
+The repository is `rin999999334/squat-for-mac` and has been created privately. Visibility remains private until the owner completes the [release checklist](docs/RELEASE_PLAN.md). Once public, a star is a simple way to bookmark the project if it is useful to you.
 
 Project code is reserved during the private review phase; no redistribution or modification license has been selected. Included third-party assets retain their own licenses: [Third-party notices](THIRD_PARTY_NOTICES.md).
