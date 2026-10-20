@@ -6,8 +6,6 @@ enum AppLanguage: String, CaseIterable, Identifiable {
     var id: String { rawValue }
 }
 
-enum ReminderTriggerMode: String, Codable { case time, afterSend }
-
 @MainActor final class AppSettings: ObservableObject {
     private let defaults: UserDefaults
     @Published var onboardingCompleted: Bool { didSet { defaults.set(onboardingCompleted, forKey: Self.onboardingKey) } }
@@ -21,9 +19,6 @@ enum ReminderTriggerMode: String, Codable { case time, afterSend }
     @Published var selectedProviders: Set<AIProvider> { didSet { defaults.set(selectedProviders.map(\.rawValue).sorted(), forKey: "squat.refresh.providers") } }
     @Published var usageCollectionAllowed: Bool { didSet { defaults.set(usageCollectionAllowed, forKey: "squat.refresh.allowAI") } }
     @Published var deskCollectionAllowed: Bool { didSet { defaults.set(deskCollectionAllowed, forKey: "squat.refresh.allowDesk") } }
-    @Published var reminderTriggerMode: ReminderTriggerMode { didSet { defaults.set(reminderTriggerMode.rawValue, forKey: "squat.refresh.trigger") } }
-    @Published var pluginLinkEnabled: Bool { didSet { defaults.set(pluginLinkEnabled, forKey: "squat.refresh.link") } }
-    @Published var soundVolume: Int { didSet { let v = min(100, max(0, soundVolume)); if v != soundVolume { soundVolume = v }; defaults.set(v, forKey: "squat.refresh.sound") } }
     @Published var publicShareURL: String { didSet { defaults.set(publicShareURL, forKey: "squat.shareURL") } }
     var shareURL: URL? { RefreshExternalLinks.githubURL(publicShareURL) }
     var isDemoShareURL: Bool { shareURL?.absoluteString == RefreshExternalLinks.demoShare }
@@ -73,9 +68,10 @@ enum ReminderTriggerMode: String, Codable { case time, afterSend }
         } else { selectedProviders = [] }
         usageCollectionAllowed = defaults.object(forKey: "squat.refresh.allowAI") as? Bool ?? defaults.bool(forKey: Self.usageKey)
         deskCollectionAllowed = defaults.bool(forKey: "squat.refresh.allowDesk")
-        reminderTriggerMode = ReminderTriggerMode(rawValue: defaults.string(forKey: "squat.refresh.trigger") ?? "") ?? .time
-        pluginLinkEnabled = defaults.bool(forKey: "squat.refresh.link")
-        soundVolume = min(100, max(0, defaults.integer(forKey: "squat.refresh.sound")))
+        // Versions that experimented with Codex hooks may have left these
+        // preferences behind. Time-based reminders are now the only mode.
+        defaults.removeObject(forKey: "squat.refresh.trigger")
+        defaults.removeObject(forKey: "squat.refresh.link")
         if !defaults.bool(forKey: "squat.refresh.migrated.v25") {
             language = Self.resolvedLanguage(language, preferredLanguages: Locale.preferredLanguages)
             defaults.set(language.rawValue, forKey: Self.languageKey)

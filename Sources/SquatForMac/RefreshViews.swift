@@ -12,7 +12,6 @@ struct RefreshRootView: View {
     @Environment(\.accessibilityReduceMotion) private var reduced
     @State private var message: String?
     @State private var about = false
-    @State private var connectionSheet = false
     @State private var cameraExplanation = false
     @StateObject private var sharing = RefreshShareController()
     @Namespace private var dates
@@ -43,7 +42,7 @@ struct RefreshRootView: View {
                             case .home, .welcome:
                                 RefreshHome(coordinator: coordinator, store: store, history: history, settings: settings, usage: usage, dates: dates, start: start, share: share)
                             case .settings:
-                                RefreshSettings(settings: settings, usage: usage, showConnection: { connectionSheet = true }, showAbout: { about = true }, contact: contact)
+                                RefreshSettings(settings: settings, usage: usage, showAbout: { about = true }, contact: contact)
                             case .history:
                                 EmptyView()
                             case .result:
@@ -71,7 +70,6 @@ struct RefreshRootView: View {
             }
         }.background(Color.white).clipShape(RoundedRectangle(cornerRadius: 24))
             .preferredColorScheme(.light).foregroundStyle(.black)
-            .sheet(isPresented: $connectionSheet) { RefreshConnectionSheet(settings: settings, usage: usage) }
             .sheet(isPresented: $about) { aboutSheet }
             .sheet(isPresented: Binding(get: { sharing.image != nil || sharing.isPreparing }, set: { if !$0 { sharing.cancel() } })) {
                 RefreshShareSheet(settings: settings, sharing: sharing)
@@ -82,7 +80,6 @@ struct RefreshRootView: View {
                       CommandLine.arguments.contains(where: { $0.hasPrefix("--ui-fixture=") }),
                       let mode = CommandLine.arguments.first(where: { $0.hasPrefix("--review-sheet=") }).map({ String($0.dropFirst(15)) }) else { return }
                 try? await Task.sleep(nanoseconds: 300_000_000)
-                if mode == "connection" || mode == "help" { connectionSheet = true }
                 if mode.hasPrefix("share") {
                     if mode == "share-total" { await sharing.prepare(TotalCardSnapshot.make(history: history, usage: usage)) }
                     else { await sharing.prepare(TodayCardSnapshot.make(history: history, usage: usage)) }
@@ -118,7 +115,7 @@ struct RefreshRootView: View {
             Text("Version \(Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "")")
             Text(settings.t("ホームのリングで回数を選び、Go Squatで始めます。", "Set your target using the ring, then press Go Squat."))
             Text(settings.t("映像はMac内で処理します。保存・送信しません。運動記録と利用時間の集計値をMac内に保存します。", "Video is processed on this Mac and never saved or sent. Workout records and aggregate usage time stay on this Mac."))
-            Text("Zalando Sans Expanded · SIL Open Font License\nKenney Interface Sounds · CC0\nSF Compact Rounded · macOS system font")
+            Text("Zalando Sans Expanded · SIL Open Font License\nSF Compact Rounded · macOS system font")
                 .font(.system(size: 11)).foregroundStyle(.secondary)
             HStack { Spacer(); Button("Done") { about = false }.keyboardShortcut(.defaultAction) }
         }.font(.system(size: 15)).padding(24).frame(width: 362)
@@ -306,16 +303,16 @@ private struct RefreshWeek: View {
 private struct RefreshSettings: View {
     @ObservedObject var settings: AppSettings
     @ObservedObject var usage: RefreshUsageService
-    let showConnection: () -> Void; let showAbout: () -> Void; let contact: () -> Void
+    let showAbout: () -> Void; let contact: () -> Void
     @State private var providerToAllow: AIProvider?
     @State private var allowExplanation = false
     var body: some View {
         ZStack(alignment: .topLeading) {
             RoundedRectangle(cornerRadius: 12).fill(Color(white: 0.98)).frame(width: 362, height: 100).position(x: 201, y: 192)
-            RoundedRectangle(cornerRadius: 12).fill(Color(white: 0.98)).frame(width: 362, height: 252).position(x: 201, y: 456)
+            RoundedRectangle(cornerRadius: 12).fill(Color(white: 0.98)).frame(width: 362, height: 157).position(x: 201, y: 408.5)
             settingText(settings.t("AIアプリ", "AI Apps"), x: 30, y: 118)
-            settingText(settings.t("ChatGPT / Codex", "Chatgpt/Codex"), x: 36, y: 161)
-            settingText(settings.t("Claude", "Cloude"), x: 36, y: 204)
+            settingText(settings.t("ChatGPT / Codex", "ChatGPT / Codex"), x: 36, y: 161)
+            settingText(settings.t("Claude", "Claude"), x: 36, y: 204)
             RefreshSwitch(isOn: providerBinding(.chatgptDesktop)).position(x: 338, y: 170).accessibilityLabel("ChatGPT / Codex")
             RefreshSwitch(isOn: providerBinding(.claudeDesktop)).position(x: 338, y: 213).accessibilityLabel("Claude")
             RoundedRectangle(cornerRadius: 12).fill(Color(white: 0.98)).frame(width: 362, height: 44).position(x: 201, y: 276)
@@ -324,9 +321,7 @@ private struct RefreshSettings: View {
                 .accessibilityLabel(settings.t("PC利用時間を集計する", "Count active PC time"))
                 .accessibilityIdentifier("refresh.deskTime")
                 .help(settings.t("Squat起動中の有効なPC利用時間を集計します。AI利用を含みます。", "Count active PC time while Squat is running, including AI use."))
-            Button(action: showConnection) { Text(settings.t("通知とサウンド", "Notifications & Sound")).font(RefreshDesign.font(16, japanese: settings.isJapanese)).tracking(settings.isJapanese ? 0 : 0.32).frame(width: 330, height: 44, alignment: .leading).contentShape(Rectangle()) }
-                .buttonStyle(.plain).position(x: 197, y: 315.5).help(settings.t("通知タイミングと連携を開く", "Open reminder timing and connection"))
-                .accessibilityIdentifier("refresh.connection")
+            settingText(settings.t("通知", "Notifications"), x: 30, y: 306)
             settingText(settings.t("通知", "Notifications"), x: 36, y: 349)
             RefreshSwitch(isOn: $settings.usageRemindersEnabled).position(x: 338, y: 358).accessibilityLabel(settings.t("通知", "Notifications"))
             settingText(settings.t("通知の間隔", "Reminder Interval"), x: 36, y: 392)
@@ -334,20 +329,16 @@ private struct RefreshSettings: View {
                 .font(RefreshDesign.font(20)).frame(width: 58, height: 24, alignment: .leading).position(x: 65, y: 455)
             RefreshIntervalSlider(value: Binding(get: { settings.usageReminderInterval.rawValue }, set: { settings.usageReminderInterval = UsageReminderInterval(rawValue: $0) ?? .minutes60 }), japanese: settings.isJapanese, haptics: settings.hapticsEnabled)
                 .offset(y: 44)
-            settingText(settings.t("効果音", "Sound Effects"), x: 36, y: 487)
-            Text("\(settings.soundVolume)").font(RefreshDesign.font(20)).frame(width: 45, height: 24).position(x: 55, y: 550)
-            RefreshVolumeSlider(value: $settings.soundVolume, japanese: settings.isJapanese, haptics: settings.hapticsEnabled, ended: usage.playSoundPreview)
-                .offset(y: 44)
-            settingText(settings.t("言語", "Language"), x: 30, y: 594)
-            RoundedRectangle(cornerRadius: 12).fill(Color(white: 0.98)).frame(width: 362, height: 44).position(x: 201, y: 643)
+            settingText(settings.t("言語", "Language"), x: 30, y: 499)
+            RoundedRectangle(cornerRadius: 12).fill(Color(white: 0.98)).frame(width: 362, height: 44).position(x: 201, y: 548)
             HStack(spacing: 0) {
                 language("日本語", .ja); language("English", .en)
-            }.frame(width: 330, height: 28).position(x: 201, y: 643)
+            }.frame(width: 330, height: 28).position(x: 201, y: 548)
             HStack(spacing: 0) {
                 Button(action: showAbout) { Text(settings.t("バージョン ", "Version ") + (Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "")) }
                     .frame(width: 165, height: 26)
                 Button(action: contact) { Text(settings.t("お問い合わせ", "Contact us")) }.frame(width: 165, height: 26)
-            }.buttonStyle(.plain).font(RefreshDesign.font(16, japanese: settings.isJapanese)).position(x: 201, y: 690.5)
+            }.buttonStyle(.plain).font(RefreshDesign.font(16, japanese: settings.isJapanese)).position(x: 201, y: 595.5)
 
         }.frame(width: 402, height: 706)
             .confirmationDialog(settings.t("選択したアプリを前面にしている時間を集計します。", "Count selected apps while they are in front."), isPresented: $allowExplanation) {
@@ -403,25 +394,6 @@ private struct RefreshIntervalSlider: View {
         }.frame(width: 402, height: 706)
     }
     private var x: CGFloat { points[values.firstIndex(of: value) ?? 1] }
-}
-
-private struct RefreshVolumeSlider: View {
-    @Binding var value: Int
-    let japanese: Bool
-    let haptics: Bool
-    let ended: () -> Void
-    var body: some View {
-        ZStack(alignment: .topLeading) {
-            Text("0").font(RefreshDesign.font(16)).position(x: 100, y: 490.5)
-            Text("100").font(RefreshDesign.font(16)).position(x: 351, y: 486.5)
-            Capsule().fill(Color(white: 0.85)).frame(width: 268, height: 19).position(x: 229, y: 508.5)
-            if value > 0 { Capsule().fill(RefreshDesign.blue).frame(width: min(268,x-95+7.5), height: 19).position(x: 95+RefreshIntervalGeometry.fillWidth(at: x)/2, y: 508.5) }
-            Circle().fill(.white).overlay(Circle().stroke(.black, lineWidth: 3)).frame(width: 15, height: 15).position(x: x, y: 508.5)
-            RefreshLinearInput(value: value, positions: [7.5,134.5,260.5], values: [0,50,100], discrete: false, label: japanese ? "効果音の音量" : "Sound volume", change: { RefreshHaptics.changed(from: value,to: $0,channel: "volume",enabled: haptics); value = $0 }, commit: ended)
-                .frame(width: 268, height: 35).position(x: 229, y: 508.5)
-        }.frame(width: 402, height: 706)
-    }
-    private var x: CGFloat { value <= 50 ? 102.5+CGFloat(value)*127/50 : 229.5+CGFloat(value-50)*126/50 }
 }
 
 private struct RefreshLinearInput: NSViewRepresentable {

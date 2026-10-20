@@ -24,7 +24,7 @@ import Foundation
         let restarted = RefreshReminderCycle()
         check(!restarted.pending,"Restart never replays an old cycle")
         c.displayed(.primary,at: 0)
-        check(c.candidate(now: 2100,regularReady: true) == .countdown,"afterSend next event can precede 45 minute deadline")
+        check(c.candidate(now: 2100,regularReady: true) == .countdown,"next regular opportunity can precede 45 minute deadline")
         c.displayed(.countdown,at: 2100)
         check(c.candidate(now: 2700,regularReady: false) == nil,"No third follow-up")
         var ledger = RefreshUsageLedger()

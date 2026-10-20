@@ -8,13 +8,13 @@ A local macOS menu bar app that tracks active time in ChatGPT/Codex and Claude, 
 
 [日本語](README.ja.md) · [User guide](docs/USER_GUIDE.md) · [Privacy](PRIVACY.md) · [Security](SECURITY.md) · [Audit](docs/AUDIT.md) · [Known issues](docs/KNOWN_ISSUES.md)
 
-> **0.9.2 · public preview for Apple Silicon.** Download the app below. Developer ID signing and Apple notarization are not available yet; read the first-launch instructions. Source-code licensing is still undecided, so this is not an open-source licensed release.
+> **0.9.3 · public preview for Apple Silicon.** Download the app below. Developer ID signing and Apple notarization are not available yet; read the first-launch instructions. Source-code licensing is still undecided, so this is not an open-source licensed release.
 
 ## Download
 
-[Download Squat for Mac 0.9.2 — Apple Silicon ZIP](https://github.com/rin999999334/squat-for-mac/releases/download/v0.9.2/Squat-for-Mac-0.9.2-arm64.zip) · [Release notes](https://github.com/rin999999334/squat-for-mac/releases/tag/v0.9.2) · [First-launch instructions](docs/DOWNLOAD.md)
+[Download Squat for Mac 0.9.3 — Apple Silicon ZIP](https://github.com/rin999999334/squat-for-mac/releases/download/v0.9.3/Squat-for-Mac-0.9.3-arm64.zip) · [Release notes](https://github.com/rin999999334/squat-for-mac/releases/tag/v0.9.3) · [First-launch instructions](docs/DOWNLOAD.md)
 
-Download the ZIP, double-click to extract it, drag **Squat for Mac.app** into **Applications** in Finder, then open the app. No GitHub account is required to download.
+Download the ZIP, double-click to extract it, then open **Squat for Mac.app**. Confirm **Install** or **Replace** when asked; the installed copy then opens from Applications. No GitHub account is required to download.
 
 ## Preview
 
@@ -33,7 +33,7 @@ Download the ZIP, double-click to extract it, drag **Squat for Mac.app** into **
 - Offers 30, 60, 90, 120, or 180 minutes between reminders. If you skip a break, one countdown reminder becomes due at the next interval or 45 minutes after the first reminder, whichever comes first.
 - Counts camera-based up/down movements toward a target of 1–30 reps, with positioning guidance and recalibration.
 - Keeps daily records, a contribution calendar, and Today/Total cards you can save or share.
-- Supports Japanese and English, optional Desk time tracking, and adjustable soft sounds.
+- Supports Japanese and English, with optional Desk time tracking.
 
 Camera processing runs on your Mac. Video is neither recorded nor uploaded. Normal use does not require Accessibility access. There is no account, telemetry service, or cloud sync in this app. See [what is stored and when information leaves the app](PRIVACY.md).
 
@@ -56,13 +56,14 @@ The build is signed locally with an ad hoc signature by default. This is **not D
 
 The app stays in the menu bar when its window is closed. **Quit** stops tracking. It does not register itself to launch at login.
 
+Download and open each new version from GitHub Releases. If an older copy exists in Applications, the downloaded app asks for confirmation, quits the old copy, replaces it, and opens the installed version. Records and preferences live outside the app bundle and remain available to the same macOS user and storage profile. The app never downloads or forces an update by itself.
+
 ## Limits to know before trying it
 
 | Feature | Current behavior |
 | --- | --- |
 | AI time | Native app foreground time; browser tabs and background generation are not measured as AI use. ChatGPT and Codex share one total. |
 | Next reminder | Remaining **active AI time**, not a clock counting down while you use another app. It pauses while idle, asleep, locked, or exercising. |
-| Send-triggered reminder | Experimental Codex integration only. Ordinary ChatGPT/Claude send or response-completion detection is not supported. The bundled helper currently targets the review receiver; this integration is unavailable in the public preview. Use time mode. |
 | Exercise recognition | Face-position movement is a counting aid, not a verified assessment of squat technique. Lighting, framing, and other people can affect counting. |
 | Social sharing | Save/add the PNG manually on X or Instagram; the app does not automatically upload or publish it. macOS sharing is also available. |
 | Data | Stored locally, with no cloud sync or built-in export/import workflow. Keep your own backup before replacing a build. |

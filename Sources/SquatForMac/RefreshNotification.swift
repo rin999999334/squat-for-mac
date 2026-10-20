@@ -17,25 +17,6 @@ enum RefreshDesign {
     private static let compactDescriptors = CTFontManagerCreateFontDescriptorsFromURL(URL(fileURLWithPath: "/System/Library/Fonts/SFCompactRounded.ttf") as CFURL) as? [CTFontDescriptor] ?? []
 }
 
-@MainActor final class RefreshSoundPlayer {
-    private var player: NSSound?
-    private var completed = Set<UUID>()
-    private var notified = Set<UUID>()
-    func notification(id: UUID, volume: Int) {
-        guard !notified.contains(id) else { return }; notified.insert(id)
-        if notified.count > 200 { notified = [id] }
-        play("notification-soft", volume: volume)
-    }
-    func completion(id: UUID, volume: Int) {
-        guard !completed.contains(id) else { return }; completed.insert(id); play("completion-soft", volume: volume)
-    }
-    private func play(_ name: String, volume: Int) {
-        guard volume > 0, let url = SquatResources.url(name, extension: "wav", folder: "Sounds"), let sound = NSSound(contentsOf: url, byReference: true) else { return }
-        player?.stop(); sound.volume = pow(Float(min(100, max(0, volume))) / 100, 2)
-        player = sound; sound.play()
-    }
-}
-
 @MainActor final class RefreshNotificationPanel {
     private var panel: NSPanel?
     private var id: UUID?

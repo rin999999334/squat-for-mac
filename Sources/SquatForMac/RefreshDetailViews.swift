@@ -96,7 +96,7 @@ struct RefreshHistory: View {
         let reps = selected.map { history.count(on: $0) } ?? columns.flatMap { $0 }.filter { $0.date >= periodStart && $0.date <= periodEnd }.reduce(0) { $0+$1.count }
         return ZStack(alignment: .topLeading) {
             Text(selected.map(dateTitle) ?? "Total").font(RefreshDesign.font(40,medium: true)).frame(width: 350,height: 48,alignment: .leading).position(x: 201,y: 210)
-            metric("Chatgpt/Cloude",value: times.0,x: 473.5,width: 103)
+            metric("ChatGPT/Claude",value: times.0,x: 473.5,width: 103)
             metric("Desk time",value: times.1,x: 593.5,width: 103)
             metric("Squad reps",value: String(format: "%03d",reps),x: 713.5,width: 63)
         }

@@ -37,17 +37,16 @@ import Foundation
         settings.hapticsEnabled = false
         let restoredSettings = AppSettings(defaults: defaults)
         check(restoredSettings.language == .en && !restoredSettings.hapticsEnabled, "Preferences survive reload")
-        check(!settings.usageCollectionAllowed && !settings.deskCollectionAllowed && !settings.pluginLinkEnabled, "Collection and integration start without consent")
+        check(!settings.usageCollectionAllowed && !settings.deskCollectionAllowed, "Collection starts without consent")
         settings.selectedProviders = [.chatgptDesktop, .claudeDesktop]
-        settings.soundVolume = 50
         settings.usageCollectionAllowed = true
         settings.deskCollectionAllowed = true
         let reviewSettings = AppSettings(defaults: defaults)
         check(reviewSettings.selectedProviders == [.chatgptDesktop, .claudeDesktop], "Both providers persist independently")
-        check(reviewSettings.soundVolume == 50 && reviewSettings.usageCollectionAllowed && reviewSettings.deskCollectionAllowed, "Sound and collection settings persist")
+        check(reviewSettings.usageCollectionAllowed && reviewSettings.deskCollectionAllowed, "Collection settings persist")
         settings.selectedProviders.remove(.claudeDesktop)
         check(AppSettings(defaults: defaults).selectedProviders == [.chatgptDesktop], "Turning one provider off preserves the other")
-        check(settings.reminderTriggerMode == .time && !settings.pluginLinkEnabled, "Installing no plugin keeps time mode")
+        check(defaults.object(forKey: "squat.refresh.trigger") == nil && defaults.object(forKey: "squat.refresh.link") == nil, "Removed integration preferences are cleared")
         coordinator.openSettings()
         check(coordinator.screen == .settings && coordinator.showSettings, "Settings is available without onboarding")
         coordinator.completeOnboarding()

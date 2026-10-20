@@ -8,9 +8,6 @@ import Darwin
     @Published private(set) var deskDisplay = "--h--m"
     @Published private(set) var progress = UsageProgress()
     private(set) var menuUsage = RefreshMenuUsageSnapshot()
-    @Published private(set) var connection = "unconfigured"
-    @Published private(set) var lastReceived: Date?
-    @Published private(set) var waitingForSend = false
     @Published private(set) var suspended = false
     @Published private(set) var idlePaused = false
     @Published private(set) var observationUnavailable = false
@@ -26,14 +23,10 @@ import Darwin
     private var persistAt = 0.0
     private var lastDay = ""
     private var settingsStamp = ""
-    private var generation = UUID().uuidString.lowercased()
-    private var armedAt: Double?
     private var lastWorkout: UUID?
     private var invitation: RefreshInvitation?
     private var accepted = Set<UUID>()
     private let panel = RefreshNotificationPanel()
-    private let sound = RefreshSoundPlayer()
-    private let link: SquatLocalLink
     private var openApp: () -> Void
     private let referenceFixture: Bool
 
@@ -42,13 +35,11 @@ import Darwin
         ledger = defaults.data(forKey: "squat.refresh.usage.v1").flatMap { try? JSONDecoder().decode(RefreshUsageLedger.self, from: $0) } ?? .init()
         // Legacy pausedDay is decoded for compatibility and is intentionally inert: the pause-today feature was removed.
         referenceFixture = CommandLine.arguments.contains("--ui-fixture=refresh-reference") && Bundle.main.bundleIdentifier == "local.thinkandmove.ui-preview.v27"
-        link = SquatLocalLink(preview: Bundle.main.bundleIdentifier == "local.thinkandmove.ui-preview.v27")
         settings.objectWillChange.receive(on: DispatchQueue.main).sink { [weak self] in self?.settingsChanged() }.store(in: &subscriptions)
         coordinator.store.$active.removeDuplicates().receive(on: DispatchQueue.main).sink { [weak self] _ in self?.workoutChanged() }.store(in: &subscriptions)
         coordinator.store.history.$saveState.receive(on: DispatchQueue.main).sink { [weak self] state in
             guard let self else { return }
             self.workoutChanged()
-            if let r = self.coordinator.result, !r.isDemo, r.completed, state == .recorded { self.sound.completion(id: r.id, volume: self.settings.soundVolume) }
         }.store(in: &subscriptions)
     }
     var targetIsFront: Bool { currentProvider.map(settings.selectedProviders.contains) ?? false }
@@ -60,7 +51,7 @@ import Darwin
         }
     }
     var sourceName: String {
-        if settings.selectedProviders.count > 1 { return "ChatGPT/Cloude" }
+        if settings.selectedProviders.count > 1 { return "ChatGPT/Claude" }
         return settings.selectedProviders.contains(.claudeDesktop) ? "Claude" : "ChatGPT/Codex"
     }
     var elapsed: Double { ledger.elapsed(settings.selectedProviders) }
@@ -71,10 +62,6 @@ import Darwin
         if idlePaused { return settings.t("操作がないため計測を一時停止しています", "Counting is paused while idle") }
         if !settings.usageCollectionAllowed || settings.selectedProviders.isEmpty { return settings.t("集計するAIアプリを選んでください", "Choose AI apps to count") }
         if !targetIsFront { return settings.t("選択したAIアプリの利用を待っています", "Waiting for a selected AI app") }
-        if settings.reminderTriggerMode == .afterSend, connection != "verified" {
-            return settings.t("AIアプリとの連携を確認してください", "Check your AI app connection")
-        }
-        if waitingForSend { return settings.t("次の送信を待っています", "Waiting for your next message") }
         if let deadline = cycle.followupDeadline {
             let minutes = max(0, Int(ceil((deadline - Self.continuousNow) / 60)))
             return minutes == 0 ? settings.t("再通知のタイミングを待っています", "Reminder pending") : settings.t("再通知まで：\(minutes)分", "Next reminder: \(minutes) min")
@@ -93,7 +80,7 @@ import Darwin
     }
     func refresh() { sample() }
     func stop() {
-        timer?.invalidate(); timer = nil; persist(); panel.hide(); link.stop()
+        timer?.invalidate(); timer = nil; persist(); panel.hide()
         observers.forEach(NSWorkspace.shared.notificationCenter.removeObserver); observers = []
     }
     func suspend() { suspended = true; previous = nil; invalidate(cancelCycle: false); persist() }
@@ -103,30 +90,12 @@ import Darwin
         guard Bundle.main.bundleIdentifier == "local.thinkandmove.ui-preview.v27", !coordinator.store.active else { return }
         present(style, test: true)
     }
-    func playSoundPreview() { sound.notification(id: UUID(), volume: settings.soundVolume) }
-    func beginConnectionTest() {
-        settings.pluginLinkEnabled = true
-        connection = "verifying"
-        configureLink()
-    }
-    func disableConnection() {
-        settings.pluginLinkEnabled = false; link.stop(); connection = "unconfigured"; invalidate()
-    }
-    var linkFolder: URL { link.directory }
     private func settingsChanged() {
-        let stamp = "\(settings.usageRemindersEnabled)|\(settings.selectedProviders.map(\.rawValue).sorted())|\(settings.reminderTriggerMode)|\(settings.pluginLinkEnabled)|\(settings.usageReminderInterval.rawValue)|\(settings.usageCollectionAllowed)"
+        let stamp = "\(settings.usageRemindersEnabled)|\(settings.selectedProviders.map(\.rawValue).sorted())|\(settings.usageReminderInterval.rawValue)|\(settings.usageCollectionAllowed)"
         if stamp != settingsStamp {
-            settingsStamp = stamp; previous = nil; invalidate(); configureLink()
+            settingsStamp = stamp; previous = nil; invalidate()
         }
         updateDisplays(); objectWillChange.send()
-    }
-    private func configureLink() {
-        guard settings.pluginLinkEnabled else { link.stop(); connection = "unconfigured"; return }
-        do {
-            try link.start { [weak self] signal in self?.receive(signal) }
-            if connection != "verified" { connection = "verifying" }
-            link.setGate(generation: generation, armedAt: armedAt)
-        } catch { connection = "unavailable" }
     }
     private func sample() {
         let date = Date(), time = ProcessInfo.processInfo.systemUptime
@@ -156,7 +125,6 @@ import Darwin
             }
         }
         previous = (time, date, provider, active)
-        if settings.pluginLinkEnabled { link.setGate(generation: generation, armedAt: armedAt) }
         updateDisplays()
         if time - persistAt >= 60 { persist() }
         if let notice = invitation {
@@ -166,30 +134,15 @@ import Darwin
             return
         }
         guard commonEligibility(active: active) else { return }
-        if elapsed >= settings.usageReminderInterval.seconds, settings.reminderTriggerMode == .afterSend, armedAt == nil {
-            armedAt = time; waitingForSend = true; link.setGate(generation: generation, armedAt: time)
-        }
-        let ready = elapsed >= settings.usageReminderInterval.seconds && settings.reminderTriggerMode == .time
+        let ready = elapsed >= settings.usageReminderInterval.seconds
         if let style = cycle.candidate(now: Self.continuousNow, regularReady: ready) { present(style, test: false) }
     }
     private func commonEligibility(active: Bool = true) -> Bool {
-        active && NSEvent.pressedMouseButtons == 0 && previous?.active == true && !suspended && (settings.reminderTriggerMode != .afterSend || connection == "verified") && settings.usageRemindersEnabled && settings.usageCollectionAllowed && !settings.selectedProviders.isEmpty && targetIsFront && !coordinator.store.active && coordinator.screen.allowsUsageReminder && coordinator.store.history.canRecord
-    }
-    private func receive(_ event: RefreshSendSignal) {
-        guard settings.pluginLinkEnabled else { return }
-        lastReceived = Date(); connection = "verified"
-        guard settings.reminderTriggerMode == .afterSend, settings.pluginLinkEnabled,
-              let armed = armedAt, event.generation == generation, event.startedAt >= armed,
-              event.startedAt <= ProcessInfo.processInfo.systemUptime,
-              ProcessInfo.processInfo.systemUptime - event.startedAt <= 1,
-              NSWorkspace.shared.frontmostApplication?.bundleIdentifier == "com.openai.codex",
-              commonEligibility(), elapsed >= settings.usageReminderInterval.seconds else { return }
-        if let style = cycle.candidate(now: Self.continuousNow, regularReady: true) { present(style, test: false) }
+        active && NSEvent.pressedMouseButtons == 0 && previous?.active == true && !suspended && settings.usageRemindersEnabled && settings.usageCollectionAllowed && !settings.selectedProviders.isEmpty && targetIsFront && !coordinator.store.active && coordinator.screen.allowsUsageReminder && coordinator.store.history.canRecord
     }
     private func invalidate(cancelCycle: Bool = true) {
         if cancelCycle { cycle.cancel() }
-        generation = UUID().uuidString.lowercased(); armedAt = nil; waitingForSend = false
-        panel.hide(); invitation = nil; link.setGate(generation: generation, armedAt: nil)
+        panel.hide(); invitation = nil
     }
     private func workoutChanged() {
         if coordinator.store.active { invalidate(cancelCycle: false); previous = nil }
@@ -209,8 +162,8 @@ import Darwin
             guard let self, self.invitation?.id == id else { return }
             self.invitation = nil
         }) {
-            invitation = item; sound.notification(id: item.id, volume: settings.soundVolume)
-            if !test { cycle.displayed(style, at: Self.continuousNow); ledger.consume(at: Date()); armedAt = nil; waitingForSend = false; generation = UUID().uuidString.lowercased(); link.setGate(generation: generation, armedAt: nil); persist() }
+            invitation = item
+            if !test { cycle.displayed(style, at: Self.continuousNow); ledger.consume(at: Date()); persist() }
         }
     }
     private func accept(_ id: UUID) {

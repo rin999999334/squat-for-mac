@@ -1,5 +1,9 @@
 {
-  "appVersion": "0.9.0",
+  "appVersion": "mixed",
+  "appVersions": {
+    "baseCapture": "0.9.0",
+    "settings": "0.9.3"
+  },
   "fixture": "reference-weekly",
   "capturedViews": [
     "home",
@@ -35,7 +39,7 @@
       "file": "settings-demo.png",
       "width": 804,
       "height": 1412,
-      "sha256": "a1a14d5f66d12cf77106a7e59033696541f4a2889a728ee2bd37fb10a11af1d7",
+      "sha256": "eaa778b6ea95687007d66a0b1bf19905eebf416a8bf431fd38d5475b29186e28",
       "data": "synthetic demo only",
       "capture": "native app view"
     },
@@ -125,11 +129,11 @@
       "cameraRunning": false,
       "contentOpacity": 1,
       "count": 0,
-      "goal": 9,
+      "goal": 2,
       "height": 706,
-      "interval": 60,
+      "interval": 120,
       "language": "en",
-      "lifetimeReps": 258,
+      "lifetimeReps": 0,
       "nativeWindowButtons": [
         true,
         true,
@@ -142,7 +146,7 @@
       "screen": "settings",
       "sessionTarget": 5,
       "state": "idle",
-      "todayReps": 30,
+      "todayReps": 0,
       "transitioning": false,
       "width": 402,
       "windowHeight": 706,
@@ -150,5 +154,5 @@
       "workoutActive": false
     }
   },
-  "scope": "UI evidence only. Not a real-use camera, notification, usage timing, hook, or security proof."
+  "scope": "UI evidence only. Not a real-use camera, notification, usage timing, update-installation, or security proof."
 }

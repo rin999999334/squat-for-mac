@@ -2,13 +2,26 @@ import Foundation
 
 /// All synthetic data is confined to a preview bundle and its own preferences/DB.
 @MainActor struct PreviewConfiguration {
+    static let migratedStorageProfileKey = "SquatStorageProfile"
+
     let defaults: UserDefaults
     let databaseURL: URL?
     let fixedDate: Date?
     let fixture: String?
 
-    static func make(preview: Bool, arguments: [String] = CommandLine.arguments,
-                     storageProfile: String? = Bundle.main.object(forInfoDictionaryKey: "SquatStorageProfile") as? String) throws -> Self {
+    static func make(preview: Bool, arguments: [String] = CommandLine.arguments) throws -> Self {
+        let storageProfile = resolvedStorageProfile(
+            bundleValue: Bundle.main.object(forInfoDictionaryKey: migratedStorageProfileKey) as? String,
+            defaults: .standard
+        )
+        return try make(preview: preview, arguments: arguments, storageProfile: storageProfile)
+    }
+
+    static func resolvedStorageProfile(bundleValue: String?, defaults: UserDefaults) -> String? {
+        bundleValue ?? defaults.string(forKey: migratedStorageProfileKey)
+    }
+
+    static func make(preview: Bool, arguments: [String], storageProfile: String?) throws -> Self {
         guard preview else {
             // A personal installation can retain a review user's real records without
             // shipping those records or a machine-specific path in a release bundle.
@@ -47,7 +60,6 @@ import Foundation
             defaults.set(true, forKey: "squat.refresh.allowDesk")
             defaults.set(true, forKey: AppSettings.usageKey)
             defaults.set(120, forKey: AppSettings.usageIntervalKey)
-            defaults.set(50, forKey: "squat.refresh.sound")
         }
         if let interval = arguments.first(where: { $0.hasPrefix("--review-interval=") }).flatMap({ Int($0.dropFirst(18)) }) {
             defaults.set(UsageReminderInterval.normalized(interval).rawValue, forKey: AppSettings.usageIntervalKey)

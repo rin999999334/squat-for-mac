@@ -71,7 +71,7 @@ struct RefreshCardMetrics: View {
     let reps: String
     var body: some View {
         HStack(alignment: .top, spacing: 20) {
-            metric("Chatgpt/Cloude", value: ai, width: widths[0], icon: "clock")
+            metric("ChatGPT/Claude", value: ai, width: widths[0], icon: "clock")
             metric("Desk time", value: desk, width: widths[1], icon: "clock")
             metric("Squad reps", value: reps, width: widths[2], icon: "person")
         }.frame(width: rowWidth, height: rowHeight, alignment: .topLeading).position(x: 15+rowWidth/2, y: rowTop+rowHeight/2)

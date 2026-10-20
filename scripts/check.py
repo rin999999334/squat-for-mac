@@ -14,6 +14,7 @@ checks = {
     "RefreshMenuUsageChecks": ["RefreshMenuUsage"],
     "RefreshV27Checks": ["AIActivity", "RefreshModels", "RefreshReminderCycle", "UsageReminderInterval"],
     "RefreshSpecificationChecks": ["AIActivity", "RefreshModels"],
+    "DownloadedAppInstallerChecks": ["DownloadedAppInstaller"],
     "CounterChecks": ["WorkoutPreparation", "SquatCounter"],
     "FaceCounterChecks": movement[:3],
     "PreparationChecks": movement + ["CameraViewport"],

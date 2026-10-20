@@ -23,6 +23,7 @@ import QuartzCore
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         NSApp.setActivationPolicy(.accessory)
+        if !preview, DownloadedAppInstaller.offerIfNeeded() { return }
         let configuration: PreviewConfiguration
         do { configuration = try PreviewConfiguration.make(preview: preview) }
         catch { NSApp.terminate(nil); return }
@@ -179,6 +180,7 @@ import QuartzCore
     func windowWillMiniaturize(_ notification: Notification) { if store.active { coordinator.goHome() } }
     func applicationDidHide(_ notification: Notification) { if store.active { coordinator.goHome() } }
     func applicationShouldTerminate(_ sender: NSApplication) -> NSApplication.TerminateReply {
+        guard coordinator != nil, usage != nil, store != nil else { return .terminateNow }
         guard !terminating else { return .terminateLater }; terminating = true
         coordinator.goHome(); usage.stop()
         let group = DispatchGroup(); var saved = false

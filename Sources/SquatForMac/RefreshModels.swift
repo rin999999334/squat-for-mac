@@ -93,15 +93,3 @@ struct RefreshInvitation: Identifiable {
     let expiresAt: Double
     let isTest: Bool
 }
-
-struct RefreshSendSignal: Codable {
-    let protocolVersion: Int
-    let eventType: String
-    let source: String
-    let callID: String
-    let eventID: String
-    let sessionTag: String
-    let token: String
-    let generation: String
-    let startedAt: Double
-}

@@ -1,5 +1,0 @@
-{
-  "hooks": {
-    "UserPromptSubmit": [{"hooks": [{"type": "command", "command": "\"${PLUGIN_ROOT}/bin/squat-bridge\" --preview", "async": true, "timeout": 1}]}]
-  }
-}

@@ -1,6 +1,6 @@
 # Privacy
 
-Applies to the Squat for Mac 0.9.2 public-preview source tree, as reviewed on 2026-10-19. This describes this app's implementation, not the privacy practices of ChatGPT, Claude, macOS, or sites you choose to open.
+Applies to the Squat for Mac 0.9.3 public preview, as reviewed on 2026-10-21. This describes this app's implementation, not the privacy practices of ChatGPT, Claude, macOS, GitHub, or sites you choose to open.
 
 ## What runs on your Mac
 
@@ -14,7 +14,7 @@ Applies to the Squat for Mac 0.9.2 public-preview source tree, as reviewed on 20
 
 The normal runtime does not require Accessibility access, Screen Recording, microphone access, or your AI account credentials. Legacy Accessibility-related source exists in the tree; the current app entry point does not enable that observation flow.
 
-No analytics SDK, cloud sync, remote AI request, or app-owned network telemetry is implemented in the current runtime. No model calls or extra AI tokens are needed for time tracking or camera counting.
+No analytics SDK, cloud sync, remote AI request, update service, or app-owned network telemetry is implemented in the current runtime. No model calls or extra AI tokens are needed for time tracking or camera counting. New versions are downloaded manually from GitHub by the user.
 
 ## What leaves only when you choose it
 
@@ -46,11 +46,5 @@ It retains the matching review preferences suite (`local.thinkandmove.qa.<UUID>`
 Prepared share PNGs are also written to the app's temporary `SquatReviewV27-Share` folder. The folder is cleared when the share controller is initialized on a later launch; it can remain after closing a share sheet or quitting. Images you explicitly save remain in your chosen location. System backups, clipboard history, and posted copies are outside the app's deletion control.
 
 There is no in-app “erase all data” control yet. To remove local app data, first quit the app, back up anything you need, then remove only the relevant database folder and preferences domain for your installation. Removing just the `.app` does not remove those records. Do not delete unrelated review profiles or shared temporary folders blindly.
-
-## Experimental local plugin
-
-The optional Codex helper uses a local Unix-domain socket and a random token. It forwards bounded event identifiers, a generation identifier and timing metadata, not the prompt text or the AI response. It makes no model request. The host may still provide hook input to the helper process; the helper parses only metadata and does not persist its input.
-
-The socket receiver checks the same macOS user, token and message schema. Reminder delivery additionally requires a current generation and a fresh event; the connection-status indicator by itself does not establish those delivery conditions. These checks do not isolate it from malicious software already running as your user. The bundled helper currently targets a review-specific receiver while the regular app uses another receiver. This integration is not ready for general use; keep time mode for normal use.
 
 [Return to README](README.md) · [Security](SECURITY.md)

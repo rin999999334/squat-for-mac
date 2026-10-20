@@ -17,6 +17,16 @@ import Foundation
         check(personal.databaseURL?.deletingLastPathComponent().lastPathComponent == id.uuidString, "Only canonical UUID enters profile path")
         check(personal.databaseURL?.path.contains("Application Support/Squat for Mac/Profiles/") == true, "Desktop installation is independent of app location")
         check(personal.fixture == nil && personal.fixedDate == nil, "Personal build uses real time and no fixture")
+        let migratedDefaultsName = "local.thinkandmove.storage-profile-checks.\(UUID().uuidString)"
+        guard let migratedDefaults = UserDefaults(suiteName: migratedDefaultsName) else { fatalError("Cannot create test defaults") }
+        defer { migratedDefaults.removePersistentDomain(forName: migratedDefaultsName) }
+        migratedDefaults.set(id.uuidString.lowercased(), forKey: PreviewConfiguration.migratedStorageProfileKey)
+        let resolved = PreviewConfiguration.resolvedStorageProfile(bundleValue: nil, defaults: migratedDefaults)
+        check(resolved.flatMap(UUID.init(uuidString:))?.uuidString == id.uuidString,
+              "A migrated profile ID is read from preferences outside the app bundle")
+        let bundled = UUID()
+        check(PreviewConfiguration.resolvedStorageProfile(bundleValue: bundled.uuidString, defaults: migratedDefaults) == bundled.uuidString,
+              "A legacy bundle profile takes precedence during migration")
         for invalid in ["", "../other-user", "/tmp/other", "not-a-uuid"] {
             do {
                 _ = try PreviewConfiguration.make(preview: false, arguments: ["test"], storageProfile: invalid)

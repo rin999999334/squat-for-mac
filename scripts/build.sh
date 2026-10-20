@@ -46,6 +46,7 @@ if [ "$MODE" = preview ]; then
 else
     DESTINATION="$PWD/dist/Squat for Mac.app"
 fi
+APP_VERSION=$(/usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' Info.plist)
 CACHE="$PWD/.build/stamps/$MODE-$(uname -m).json"
 mkdir -p .build/locks
 BUILD_LOCK="$PWD/.build/locks/$MODE.lock"
@@ -107,10 +108,14 @@ mkdir -p "$APP/Contents/MacOS" "$APP/Contents/Resources"
 cp ".build/SquatForMac-$MODE" "$APP/Contents/MacOS/SquatForMac"
 cp Info.plist "$APP/Contents/Info.plist"
 cp -R Sources/SquatForMac/Resources/. "$APP/Contents/Resources/"
+# Optional AI hooks are intentionally not distributed. Reminders use only
+# foreground AI-use time and require no additional installation.
+rm -rf "$APP/Contents/Resources/SquatPlugin"
+rm -f "$APP/Contents/Resources/PLUGIN_SETUP.md"
 if [ "$MODE" = preview ]; then
     /usr/libexec/PlistBuddy -c 'Set :CFBundleIdentifier local.thinkandmove.ui-preview.v27' "$APP/Contents/Info.plist"
     /usr/libexec/PlistBuddy -c 'Add :SquatPreviewWelcome bool true' "$APP/Contents/Info.plist"
-    /usr/libexec/PlistBuddy -c 'Set :CFBundleDisplayName Squat for Mac Preview 0.9.2' "$APP/Contents/Info.plist"
+    /usr/libexec/PlistBuddy -c "Set :CFBundleDisplayName Squat for Mac Preview $APP_VERSION" "$APP/Contents/Info.plist"
 fi
 # Remove only Finder metadata from the generated staging bundle.
 xattr -dr com.apple.FinderInfo "$APP" 2>/dev/null || true
